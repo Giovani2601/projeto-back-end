@@ -7,6 +7,7 @@ require("dotenv").config();
 const DB_USER = process.env.DB_USER;
 const DB_PASSWORD = process.env.DB_PASSWORD;
 const rotaUsuarios = require("./routes/usuarios");
+const rotaLivros = require("./routes/livros");
 
 //config
     //body-parser
@@ -22,6 +23,7 @@ const rotaUsuarios = require("./routes/usuarios");
 
 //rotas
 app.use("/usuarios", rotaUsuarios);
+app.use("/livros", rotaLivros);
 app.get("/", (req,res) => {
     res.send("Ola mundo");
 })
