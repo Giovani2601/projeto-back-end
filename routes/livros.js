@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express();
+const router = express.Router();
 const mongoose = require("mongoose");
 require("../models/Livro");
 const Livro = mongoose.model("livros");
