@@ -51,8 +51,19 @@ router.post("/", auth.verificaAdmin, async (req,res) => {
 
 //rota para ver TODOS os emprestimos (apenas admins)
 router.get("/", auth.verificaAdmin, async (req,res) => {
+    const limite = parseInt(req.query.limite) || 5;
+    const pagina = parseInt(req.query.pagina) || 1;
+    const skip = limite * (pagina - 1);
+
+    if (![5, 10, 30].includes(limite)) {
+        return res.status(400).json({message: "Erro, o limite deve ser 5, 10 ou 30."});
+    }
+    if (pagina <= 0) {
+        return res.status(400).json({message: "Erro, a página deve ser maior que 0."});
+    }
+
     try {
-        const emprestimos = await Emprestimo.find();
+        const emprestimos = await Emprestimo.find().skip(skip).limit(limite);
         return res.status(200).json(emprestimos);
     } catch(erro) {
         return res.status(500).json({errorMessage: "Erro interno no servidor, erro: "+erro.message});
@@ -78,10 +89,21 @@ router.delete("/:id", auth.verificaAdmin, async (req,res) => {
 
 //rota para usuarios comuns verem seus proprios emprestimos
 router.get("/meus", auth.verificaUser, async (req,res) => {
+    const limite = parseInt(req.query.limite) || 5;
+    const pagina = parseInt(req.query.pagina) || 1;
+    const skip = limite * (pagina - 1);
+
+    if (![5, 10, 30].includes(limite)) {
+        return res.status(400).json({message: "Erro, o limite deve ser 5, 10 ou 30."});
+    }
+    if (pagina <= 0) {
+        return res.status(400).json({message: "Erro, a página deve ser maior que 0."});
+    }
+
     const user = req.user;
 
     try {
-        const emprestimos = await Emprestimo.find({idUsuario: user._id});
+        const emprestimos = await Emprestimo.find({idUsuario: user._id}).skip(skip).limit(limite);
         return res.status(200).json(emprestimos);
     } catch(erro) {
         return res.status(500).json({errorMessage: "Erro interno no servidor, erro: "+erro.message});

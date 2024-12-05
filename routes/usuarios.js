@@ -82,7 +82,18 @@ router.post("/login", (req,res) => {
 
 //rota para ver todos os usuarios cadastrados (apenas admins)
 router.get("/", auth.verificaAdmin, (req,res) => {
-    Usuario.find().then((usuarios) => {
+    const limite = parseInt(req.query.limite) || 5;
+    const pagina = parseInt(req.query.pagina) || 1;
+    const skip = limite * (pagina - 1);
+
+    if (![5, 10, 30].includes(limite)) {
+        return res.status(400).json({message: "Erro, o limite deve ser 5, 10 ou 30."});
+    }
+    if (pagina <= 0) {
+        return res.status(400).json({message: "Erro, a página deve ser maior que 0."});
+    }
+
+    Usuario.find().skip(skip).limit(limite).then((usuarios) => {
         return res.status(200).json(usuarios);
     }).catch((erro) => {
         return res.status(500).json({errorMessage: "Erro interno no servidor, erro: "+erro})

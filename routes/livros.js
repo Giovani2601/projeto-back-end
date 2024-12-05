@@ -34,7 +34,18 @@ router.post("/", auth.verificaAdmin, (req,res) => {
 
 //rota para ver todos os livros
 router.get("/", auth.verificaUser, (req,res) => {
-    Livro.find().then((livros) => {
+    const limite = parseInt(req.query.limite) || 5;
+    const pagina = parseInt(req.query.pagina) || 1;
+    const skip = limite * (pagina - 1);
+
+    if (![5, 10, 30].includes(limite)) {
+        return res.status(400).json({message: "Erro, o limite deve ser 5, 10 ou 30."});
+    }
+    if (pagina <= 0) {
+        return res.status(400).json({message: "Erro, a página deve ser maior que 0."});
+    }
+
+    Livro.find().skip(skip).limit(limite).then((livros) => {
         return res.status(200).json(livros);
     }).catch((erro) => {
         return res.status(500).json({errorMessage: "Erro interno no servidor, erro: "+erro});
@@ -43,7 +54,18 @@ router.get("/", auth.verificaUser, (req,res) => {
 
 //rota para ver todos os livros DISPONIVEIS (status = 1)
 router.get("/disponiveis", auth.verificaUser, (req,res) => {
-    Livro.find({status: 1}).then((livros) => {
+    const limite = parseInt(req.query.limite) || 5;
+    const pagina = parseInt(req.query.pagina) || 1;
+    const skip = limite * (pagina - 1);
+
+    if (![5, 10, 30].includes(limite)) {
+        return res.status(400).json({message: "Erro, o limite deve ser 5, 10 ou 30."});
+    }
+    if (pagina <= 0) {
+        return res.status(400).json({message: "Erro, a página deve ser maior que 0."});
+    }
+
+    Livro.find({status: 1}).skip(skip).limit(limite).then((livros) => {
         return res.status(200).json(livros);
     }).catch((erro) => {
         return res.status(500).json({errorMessage: "Erro interno no servidor, erro: "+erro});
