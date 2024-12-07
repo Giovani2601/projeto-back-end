@@ -9,6 +9,69 @@ require("dotenv").config();
 const SECRET = process.env.SECRET;
 const auth = require("../auth/auth");
 
+/**
+ * @swagger
+ * /usuarios:
+ *   post:
+ *     summary: Criação de uma nova conta de usuário
+ *     tags: [Usuários]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nome:
+ *                 type: string
+ *                 description: Nome do usuário
+ *                 example: João Silva
+ *               email:
+ *                 type: string
+ *                 description: Email do usuário
+ *                 example: joao.silva@email.com
+ *               senha:
+ *                 type: string
+ *                 description: Senha do usuário (mínimo 4 caracteres)
+ *                 example: senha123
+ *               senha2:
+ *                 type: string
+ *                 description: Confirmação da senha
+ *                 example: senha123
+ *     responses:
+ *       201:
+ *         description: Usuário criado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Usuario criado com sucesso!!!
+ *                 usuarioCriado:
+ *                   $ref: '#/components/schemas/Usuario'
+ *       400:
+ *         description: Dados inválidos enviados
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Erro, as senhas devem coincidir
+ *       500:
+ *         description: Erro interno no servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "Erro interno no servidor"
+ */
 //rota de criacao de conta
 router.post("/", (req,res) => {
     if(!req.body.nome || typeof req.body.nome === undefined || req.body.nome === null) {
@@ -48,6 +111,83 @@ router.post("/", (req,res) => {
     })
 })
 
+/**
+ * @swagger
+ * /usuarios/login:
+ *   post:
+ *     summary: Realiza o login de um usuário
+ *     tags: [Usuários]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: Email do usuário
+ *                 example: joao.silva@email.com
+ *               senha:
+ *                 type: string
+ *                 description: Senha do usuário
+ *                 example: senha123
+ *     responses:
+ *       200:
+ *         description: Login realizado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Login realizado com sucesso!!!
+ *                 token:
+ *                   type: string
+ *                   description: Token JWT para autenticação
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *       400:
+ *         description: Dados inválidos enviados
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Erro, senha invalida
+ *       404:
+ *         description: Usuário não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Nenhum usuario encontrado com este email
+ *       401:
+ *         description: Credenciais inválidas
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Erro, senha incorreta
+ *       500:
+ *         description: Erro interno no servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "Erro interno no servidor"
+ */
 //rota de login
 router.post("/login", (req,res) => {
     if(!req.body.email || typeof req.body.email === undefined || req.body.email === null) {
@@ -80,6 +220,71 @@ router.post("/login", (req,res) => {
     })
 })
 
+/**
+ * @swagger
+ * /usuarios:
+ *   get:
+ *     summary: Lista todos os usuários cadastrados (Apenas admins)
+ *     tags: [Usuários]
+ *     security:
+ *       - authorization: []
+ *     parameters:
+ *       - in: query
+ *         name: limite
+ *         schema:
+ *           type: integer
+ *           enum: [5, 10, 30]
+ *           default: 5
+ *         description: Número de usuários a serem retornados por página.
+ *       - in: query
+ *         name: pagina
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Número da página a ser retornada.
+ *     responses:
+ *       200:
+ *         description: Lista de usuários retornada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     description: ID único do usuário
+ *                     example: 64adf0e1f5b65a0012ef6e4f
+ *                   nome:
+ *                     type: string
+ *                     description: Nome do usuário
+ *                     example: João Silva
+ *                   email:
+ *                     type: string
+ *                     description: Email do usuário
+ *                     example: joao.silva@email.com
+ *       400:
+ *         description: Parâmetros de consulta inválidos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Erro, o limite deve ser 5, 10 ou 30.
+ *       500:
+ *         description: Erro interno no servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "Erro interno no servidor"
+ */
 //rota para ver todos os usuarios cadastrados (apenas admins)
 router.get("/", auth.verificaAdmin, (req,res) => {
     const limite = parseInt(req.query.limite) || 5;
@@ -100,6 +305,88 @@ router.get("/", auth.verificaAdmin, (req,res) => {
     })
 })
 
+/**
+ * @swagger
+ * /usuarios/admin:
+ *   post:
+ *     summary: Cria uma nova conta de administrador (Apenas admins)
+ *     tags: [Usuários]
+ *     security:
+ *       - authorization: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nome:
+ *                 type: string
+ *                 description: Nome do administrador
+ *                 example: Maria Admin
+ *               email:
+ *                 type: string
+ *                 description: Email do administrador
+ *                 example: maria.admin@email.com
+ *               senha:
+ *                 type: string
+ *                 description: Senha do administrador
+ *                 example: senha123
+ *               senha2:
+ *                 type: string
+ *                 description: Confirmação da senha
+ *                 example: senha123
+ *     responses:
+ *       201:
+ *         description: Conta de administrador criada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Novo admin criado com sucesso!!!
+ *                 adminCriado:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       description: ID único do administrador
+ *                       example: 64adf0e1f5b65a0012ef6e4f
+ *                     nome:
+ *                       type: string
+ *                       description: Nome do administrador
+ *                       example: Maria Admin
+ *                     email:
+ *                       type: string
+ *                       description: Email do administrador
+ *                       example: maria.admin@email.com
+ *                     isAdmin:
+ *                       type: integer
+ *                       description: Indica se o usuário é administrador
+ *                       example: 1
+ *       400:
+ *         description: Dados inválidos fornecidos na requisição
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Erro, as senhas devem coincidir
+ *       500:
+ *         description: Erro interno no servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "Erro interno no servidor"
+ */
 //rota para criar novas contas de admin (apenas admins)
 router.post("/admin", auth.verificaAdmin, (req,res) => {
     if(!req.body.nome || typeof req.body.nome === undefined || req.body.nome === null) {
@@ -140,6 +427,102 @@ router.post("/admin", auth.verificaAdmin, (req,res) => {
     })
 })
 
+/**
+ * @swagger
+ * /usuarios/admin/{id}:
+ *   put:
+ *     summary: Altera dados de um usuário (Apenas admins)
+ *     tags: [Usuários]
+ *     security:
+ *       - authorization: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do usuário a ser alterado
+ *         schema:
+ *           type: string
+ *           example: 64adf0e1f5b65a0012ef6e4f
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nome:
+ *                 type: string
+ *                 description: Nome do usuário
+ *                 example: João Silva
+ *               email:
+ *                 type: string
+ *                 description: Email do usuário
+ *                 example: joao.silva@email.com
+ *               senha:
+ *                 type: string
+ *                 description: Nova senha do usuário
+ *                 example: novaSenha123
+ *               senha2:
+ *                 type: string
+ *                 description: Confirmação da nova senha
+ *                 example: novaSenha123
+ *     responses:
+ *       200:
+ *         description: Usuário alterado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Usuário alterado com sucesso!!!
+ *                 usuarioAlterado:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       description: ID do usuário alterado
+ *                       example: 64adf0e1f5b65a0012ef6e4f
+ *                     nome:
+ *                       type: string
+ *                       description: Nome do usuário alterado
+ *                       example: João Silva
+ *                     email:
+ *                       type: string
+ *                       description: Email do usuário alterado
+ *                       example: joao.silva@email.com
+ *       400:
+ *         description: Dados inválidos fornecidos na requisição
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Erro, as senhas devem coincidir
+ *       404:
+ *         description: Usuário não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Erro, usuário a alterar não encontrado
+ *       500:
+ *         description: Erro interno no servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "Erro interno no servidor"
+ */
 //rota para alterar dados de outros usuarios (apenas admins)
 router.put("/admin/:id", auth.verificaAdmin, (req,res) => {
     if(!req.body.nome || typeof req.body.nome === undefined || req.body.nome === null) {
@@ -185,6 +568,54 @@ router.put("/admin/:id", auth.verificaAdmin, (req,res) => {
     })
 })
 
+/**
+ * @swagger
+ * /usuarios/admin/{id}:
+ *   delete:
+ *     summary: Exclui um usuário (Apenas admins)
+ *     tags: [Usuários]
+ *     security:
+ *       - authorization: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do usuário a ser excluído
+ *         schema:
+ *           type: string
+ *           example: 64adf0e1f5b65a0012ef6e4f
+ *     responses:
+ *       200:
+ *         description: Usuário excluído com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Usuário excluído com sucesso!!!
+ *       404:
+ *         description: Usuário não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Erro, usuário não encontrado
+ *       500:
+ *         description: Erro interno no servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "Erro interno no servidor"
+ */
 //rota para excluir usuarios (apenas admins)
 router.delete("/admin/:id", auth.verificaAdmin, (req,res) => {
     Usuario.deleteOne({_id: req.params.id}).then(() => {
@@ -194,6 +625,84 @@ router.delete("/admin/:id", auth.verificaAdmin, (req,res) => {
     })
 })
 
+/**
+ * @swagger
+ * /usuarios:
+ *   put:
+ *     summary: Altera os dados do usuário autenticado
+ *     tags: [Usuários]
+ *     security:
+ *       - authorization: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nome:
+ *                 type: string
+ *                 example: "João Silva"
+ *               email:
+ *                 type: string
+ *                 example: "joao.silva@email.com"
+ *               senha:
+ *                 type: string
+ *                 example: "novaSenha123"
+ *               senha2:
+ *                 type: string
+ *                 example: "novaSenha123"
+ *     responses:
+ *       200:
+ *         description: Dados alterados com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Dados alterados com sucesso!!!
+ *                 usuarioAlterado:
+ *                   type: object
+ *                   properties:
+ *                     nome:
+ *                       type: string
+ *                       example: "João Silva"
+ *                     email:
+ *                       type: string
+ *                       example: "joao.silva@email.com"
+ *       400:
+ *         description: Erro, dados inválidos ou senhas não coincidem
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Erro, nome invalido
+ *       404:
+ *         description: Dados não encontrados
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Erro, dados não encontrados
+ *       500:
+ *         description: Erro interno no servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "Erro interno no servidor"
+ */
 //rota para alterar os proprios dados
 router.put("/", auth.verificaUser, (req,res) => {
     const user = req.user;

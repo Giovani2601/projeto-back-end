@@ -12,6 +12,8 @@ const rotaEmprestimos = require("./routes/emprestimos");
 require("./models/Usuario");
 const Usuario = mongoose.model("usuarios");
 const bcrypt = require("bcryptjs");
+const swaggerUI = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc");
 
 //config
     //body-parser
@@ -24,6 +26,62 @@ const bcrypt = require("bcryptjs");
     }).catch((erro) => {
         console.log("Erro ao se conectar ao banco de dados, erro: "+erro);
     })
+
+    //swagger
+    const swaggerDefinition = {
+        openapi: "3.0.0",
+        info: {
+            title: "Sistema de Gerenciamento de Empréstimos de Livros",
+            version: "1.0.0",
+            description: "API para gerenciar empréstimos de livros, com autenticação e controle de acesso"
+        },
+        servers: [
+            {
+                url: "http://localhost:3000",
+                description: "Servidor local"
+            }
+        ],
+        components: {
+            schemas: {
+                Usuario: {
+                    type: "object",
+                    properties: {
+                        nome: { type: "string", description: "Nome do usuário", example: "João Silva" },
+                        email: { type: "string", description: "E-mail do usuário", example: "joao@example.com" },
+                        senha: { type: "string", description: "Senha do usuário", example: "123456" },
+                        isAdmin: { type: "number", description: "Define se o usuário é administrador (1 para sim, 0 para não)", example: 1 }
+                    },
+                    required: ["nome", "email", "senha"]
+                },
+                Livro: {
+                    type: "object",
+                    properties: {
+                        titulo: { type: "string", description: "Título do livro", example: "O Senhor dos Anéis" },
+                        autor: { type: "string", description: "Autor do livro", example: "J.R.R. Tolkien" },
+                        status: { type: "number", description: "Disponibilidade do livro (1 para disponível, 0 para indisponível)", example: 1 }
+                    },
+                    required: ["titulo", "autor"]
+                },
+                Emprestimo: {
+                    type: "object",
+                    properties: {
+                        idUsuario: { type: "string", description: "ID do usuário que fez o empréstimo", example: "641e4a9c8a12bc7fa9e8d2a1" },
+                        idLivro: { type: "string", description: "ID do livro emprestado", example: "641e4a9c8a12bc7fa9e8d2a2" },
+                        dataEmprestimo: { type: "string", format: "date-time", description: "Data do empréstimo", example: "2024-12-01T12:34:56Z" }
+                    },
+                    required: ["idUsuario", "idLivro"]
+                }
+            }
+        }
+    };
+
+    const options = {
+        swaggerDefinition,
+        apis: ["./routes/*.js"]
+    };
+
+    const swaggerSpec = swaggerJsDoc(options);
+    app.use("/docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 //rotas
 app.use("/usuarios", rotaUsuarios);
