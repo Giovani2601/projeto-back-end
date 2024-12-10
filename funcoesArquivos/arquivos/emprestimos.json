@@ -1,0 +1,16 @@
+[
+    {
+        "_id": "674f7f9173c1b25192947eec",
+        "idUsuario": "6748afd1ad87d71e3aa1d58c",
+        "idLivro": "674e42a6e5d351c69b612cd8",
+        "dataEmprestimo": "2024-12-03T22:00:49.466Z",
+        "__v": 0
+    },
+    {
+        "idUsuario": "67583ef2a68207fd8ad27b9f",
+        "idLivro": "67584429bb2e525ce1d1be59",
+        "_id": "675846f76c04e5dad508e6b1",
+        "dataEmprestimo": "2024-12-10T13:49:43.728Z",
+        "__v": 0
+    }
+]

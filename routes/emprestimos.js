@@ -8,6 +8,30 @@ require("../models/Livro");
 const Livro = mongoose.model("livros");
 require("../models/Emprestimo");
 const Emprestimo = mongoose.model("emprestimos");
+const funcoesArquivos = require("../funcoesArquivos/funcoesArquivos");
+
+router.get('/sincronizar-arquivo', auth.verificaAdmin, (req, res) => {
+    Emprestimo.find().then((emprestimos) => {
+        funcoesArquivos.writeData('emprestimos.json', emprestimos)
+            .then(() => {
+                res.status(200).json({ 
+                    message: "Arquivo sincronizado com sucesso!", 
+                    quantidade: emprestimos.length 
+                });
+            })
+            .catch((erro) => {
+                res.status(500).json({ 
+                    message: "Erro ao sincronizar arquivo", 
+                    error: erro.message 
+                });
+            });
+    }).catch((erro) => {
+        res.status(500).json({ 
+            message: "Erro ao buscar emprestimos no banco", 
+            error: erro.message 
+        });
+    });
+});
 
 //funcao para verificar se a quantidade de emprestimos de um usuario e valida
 async function verificaEmprestimos(userId) {
@@ -109,6 +133,12 @@ router.post("/", auth.verificaAdmin, async (req,res) => {
         await livro.save();
 
         const emprestimoCriado = await new Emprestimo(novoEmprestimo).save();
+        const data = await funcoesArquivos.readData("emprestimos.json");
+        const emprestimos = data || [];
+
+        emprestimos.push(emprestimoCriado.toObject());
+        await funcoesArquivos.writeData("emprestimos.json", emprestimos);
+
         return res.status(201).json({message: "Emprestimo criado com sucesso!!!", emprestimoCriado:emprestimoCriado});
     } catch(erro) {
         return res.status(500).json({errorMessage: "Erro interno no servidor, erro: "+erro.message});

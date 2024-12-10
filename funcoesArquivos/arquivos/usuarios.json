@@ -1,0 +1,58 @@
+[
+    {
+        "_id": "6748afd1ad87d71e3aa1d58c",
+        "nome": "user",
+        "email": "user@user.com",
+        "senha": "$2a$10$yI5PdzPZnUyfI8qz/Kct1eBDptOTF9fAeDnhx2sXuemC/cMpyk2YS",
+        "isAdmin": 0,
+        "__v": 0
+    },
+    {
+        "_id": "67517b35554129c3bd886919",
+        "nome": "admin",
+        "email": "admin@admin.com",
+        "senha": "$2a$10$NN3AjzNgoHIHy9KZhLefzezMdaGgoPBRwiuwi7sJrIK3U4yZMjYya",
+        "isAdmin": 1,
+        "__v": 0
+    },
+    {
+        "_id": "67583ef2a68207fd8ad27b9f",
+        "nome": "teste",
+        "email": "teste@testecom",
+        "senha": "$2a$10$xZF5G2LX72O.W7PslZb6FOMHLY7N82pBLpKH.GmnrZgPN1HKpulUS",
+        "isAdmin": 0,
+        "__v": 0
+    },
+    {
+        "_id": "67583f6df8e972e21d005560",
+        "nome": "teste2",
+        "email": "teste2@teste2com",
+        "senha": "$2a$10$xukn0Ezs7z14q6bF6wo6Je467j9MJwsc/FMrYQiB02k8aOpxzWVxu",
+        "isAdmin": 0,
+        "__v": 0
+    },
+    {
+        "nome": "teste2",
+        "email": "teste2@teste2com",
+        "senha": "$2a$10$vDVKBDxklMjLyqWZn0rjceooRzAN5XE9uHcO3PiTeT52tYOt6bNeS",
+        "isAdmin": 0,
+        "_id": "6758408b35314efd61723f5c",
+        "__v": 0
+    },
+    {
+        "nome": "teste3",
+        "email": "teste3@teste3com",
+        "senha": "$2a$10$k.kht./Fl/ksM.uI5qiFCePnOHLpHAb4DX1KQfRaWyAXrM9cZrVPK",
+        "isAdmin": 0,
+        "_id": "675840a1e2e28a43d82835de",
+        "__v": 0
+    },
+    {
+        "nome": "admin2",
+        "email": "admin2@admin2.com",
+        "senha": "$2a$10$B1Iptl3jXTuqLhtyJm8YMuIq6SJCIhqY40G7ngL80LyjRqOhvkNpy",
+        "isAdmin": 1,
+        "_id": "675841a391c58d7204449ebf",
+        "__v": 0
+    }
+]

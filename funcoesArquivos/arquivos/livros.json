@@ -1,0 +1,79 @@
+[
+    {
+        "_id": "674e41fd4082a7b35d888417",
+        "titulo": "Dom Quixote",
+        "autor": "Miguel de Cervantes",
+        "status": 1,
+        "__v": 0
+    },
+    {
+        "_id": "674e42064082a7b35d88841a",
+        "titulo": "Orgulho e Preconceito",
+        "autor": "Jane Austen",
+        "status": 1,
+        "__v": 0
+    },
+    {
+        "_id": "674e42104082a7b35d88841d",
+        "titulo": "1984",
+        "autor": "George Orwell",
+        "status": 1,
+        "__v": 0
+    },
+    {
+        "_id": "674e4284e5d351c69b612ccf",
+        "titulo": "O Pequeno Príncipe",
+        "autor": "Antoine de Saint-Exupéry",
+        "status": 0,
+        "__v": 0
+    },
+    {
+        "_id": "674e4294e5d351c69b612cd2",
+        "titulo": "Moby Dick",
+        "autor": "Herman Melville",
+        "status": 1,
+        "__v": 0
+    },
+    {
+        "_id": "674e429de5d351c69b612cd5",
+        "titulo": "Cem Anos de Solidão",
+        "autor": "Gabriel García Márquez",
+        "status": 0,
+        "__v": 0
+    },
+    {
+        "_id": "674e42a6e5d351c69b612cd8",
+        "titulo": "A Revolução dos Bichos",
+        "autor": "George Orwell",
+        "status": 0,
+        "__v": 0
+    },
+    {
+        "_id": "674e42afe5d351c69b612cdb",
+        "titulo": "O Senhor dos Anéis: A Sociedade do Anel",
+        "autor": "J.R.R. Tolkien",
+        "status": 1,
+        "__v": 0
+    },
+    {
+        "_id": "674e42bbe5d351c69b612cde",
+        "titulo": "As Crônicas de Nárnia",
+        "autor": "C.S. Lewis",
+        "status": 0,
+        "__v": 0
+    },
+    {
+        "_id": "674e42c5e5d351c69b612ce1",
+        "titulo": "Harry Potter e a Ordem da Phoenix",
+        "autor": "J.K. Rowling",
+        "status": 1,
+        "__v": 0
+    },
+    {
+        "titulo": "meridiano de sangue",
+        "autor": "Cormac McCarthy",
+        "status": 1,
+        "_id": "67584429bb2e525ce1d1be59",
+        "__v": 0
+    }
+]

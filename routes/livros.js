@@ -4,6 +4,30 @@ const mongoose = require("mongoose");
 require("../models/Livro");
 const Livro = mongoose.model("livros");
 const auth = require("../auth/auth");
+const funcoesArquivos = require("../funcoesArquivos/funcoesArquivos");
+
+router.get('/sincronizar-arquivo', auth.verificaAdmin, (req, res) => {
+    Livro.find().then((livros) => {
+        funcoesArquivos.writeData('livros.json', livros)
+            .then(() => {
+                res.status(200).json({ 
+                    message: "Arquivo sincronizado com sucesso!", 
+                    quantidade: livros.length 
+                });
+            })
+            .catch((erro) => {
+                res.status(500).json({ 
+                    message: "Erro ao sincronizar arquivo", 
+                    error: erro.message 
+                });
+            });
+    }).catch((erro) => {
+        res.status(500).json({ 
+            message: "Erro ao buscar livros no banco", 
+            error: erro.message 
+        });
+    });
+});
 
 /**
  * @swagger
@@ -91,7 +115,13 @@ router.post("/", auth.verificaAdmin, (req,res) => {
     }
 
     new Livro(novoLivro).save().then((livroCriado) => {
-        return res.status(201).json({message: "Livro cadastrado com sucesso!!!", livroCriado:livroCriado});
+        funcoesArquivos.readData("livros.json").then((data) => {
+            const livros = data || [];
+            livros.push(livroCriado.toObject());
+            funcoesArquivos.writeData('livros.json', livros).then(() => {
+                return res.status(201).json({message: "Livro cadastrado com sucesso!!!", livroCriado:livroCriado});
+            });
+        })
     }).catch((erro) => {
         return res.status(500).json({errorMessage: "Erro interno no servidor, erro: "+erro});
     })

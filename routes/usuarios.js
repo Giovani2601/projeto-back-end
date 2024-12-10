@@ -8,6 +8,30 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const SECRET = process.env.SECRET;
 const auth = require("../auth/auth");
+const funcoesArquivos = require("../funcoesArquivos/funcoesArquivos");
+
+router.get('/sincronizar-arquivo', auth.verificaAdmin, (req, res) => {
+    Usuario.find().then((usuarios) => {
+        funcoesArquivos.writeData('usuarios.json', usuarios)
+            .then(() => {
+                res.status(200).json({ 
+                    message: "Arquivo sincronizado com sucesso!", 
+                    quantidade: usuarios.length 
+                });
+            })
+            .catch((erro) => {
+                res.status(500).json({ 
+                    message: "Erro ao sincronizar arquivo", 
+                    error: erro.message 
+                });
+            });
+    }).catch((erro) => {
+        res.status(500).json({ 
+            message: "Erro ao buscar usuários no banco", 
+            error: erro.message 
+        });
+    });
+});
 
 /**
  * @swagger
@@ -105,7 +129,13 @@ router.post("/", (req,res) => {
     }
 
     new Usuario(novoUsuario).save().then((usuarioCriado) => {
-        return res.status(201).json({message: "Usuario criado com sucesso!!!", usuarioCriado:usuarioCriado});
+        funcoesArquivos.readData("usuarios.json").then((data) => {
+            const usuarios = data || [];
+            usuarios.push(usuarioCriado.toObject());
+            funcoesArquivos.writeData('usuarios.json', usuarios).then(() => {
+                return res.status(201).json({message: "Usuario criado com sucesso!!!", usuarioCriado:usuarioCriado});
+            });
+        })
     }).catch((erro) => {
         return res.status(500).json({errorMessage: "Erro interno no servidor, erro: "+erro})
     })
@@ -421,7 +451,14 @@ router.post("/admin", auth.verificaAdmin, (req,res) => {
     }
 
     new Usuario(novoAdmin).save().then((adminCriado) => {
-        return res.status(201).json({message: "Novo admin criado com sucesso!!!", adminCriado:adminCriado});
+        funcoesArquivos.readData("usuarios.json").then((data) => {
+            const usuarios = data || [];
+            usuarios.push(adminCriado.toObject());
+            funcoesArquivos.writeData('usuarios.json', usuarios).then(() => {
+                return res.status(201).json({message: "Novo admin criado com sucesso!!!", adminCriado:adminCriado});
+            });
+        })
+        //return res.status(201).json({message: "Novo admin criado com sucesso!!!", adminCriado:adminCriado});
     }).catch((erro) => {
         return res.status(500).json({errorMessage: "Erro interno no servidor, erro: "+erro})
     })
